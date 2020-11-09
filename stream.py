@@ -1,30 +1,18 @@
 import tweepy
 import socket
 import re
+from config import *
 # import preprocessor
 
 
-
-# Enter your Twitter keys here!!!
-ACCESS_TOKEN = 
-ACCESS_SECRET = 
-CONSUMER_KEY = 
-CONSUMER_SECRET = 
-
-
-auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
-
+auth = tweepy.OAuthHandler(API_KEY, API_KEY_S)
+auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_S)
 
 hashtag = '#covid19'
 
-TCP_IP = 'localhost'
-TCP_PORT = 9001
-
-
-
-
 def preprocessing(tweet):
+
+    print(tweet)
     
     # Add here your code to preprocess the tweets and  
     # remove Emoji patterns, emoticons, symbols & pictographs, transport & map symbols, flags (iOS), etc
@@ -32,61 +20,49 @@ def preprocessing(tweet):
     return tweet
 
 
-
-
 def getTweet(status):
     
     # You can explore fields/data other than location and the tweet itself. 
     # Check what else you could explore in terms of data inside Status object
 
-    tweet = ""
-    location = ""
-
+    tweet = ''
     location = status.user.location
     
-    if hasattr(status, "retweeted_status"):  # Check if Retweet
+    if hasattr(status, 'retweeted_status'):  # Check if Retweet
         try:
-            tweet = status.retweeted_status.extended_tweet["full_text"]
+            tweet = status.retweeted_status.extended_tweet['full_text']
         except AttributeError:
             tweet = status.retweeted_status.text
     else:
         try:
-            tweet = status.extended_tweet["full_text"]
+            tweet = status.extended_tweet['full_text']
         except AttributeError:
             tweet = status.text
 
     return location, preprocessing(tweet)
 
 
-
-
-
 # create sockets
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((TCP_IP, TCP_PORT))
-s.listen(1)
-conn, addr = s.accept()
+# s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# s.bind((TCP_IP, TCP_PORT))
+# s.listen(1)
+# conn, addr = s.accept()
 
-class MyStreamListener(tweepy.StreamListener):
-
+class StreamListener(tweepy.StreamListener):
     def on_status(self, status):
         location, tweet = getTweet(status)
-
-        if (location != None and tweet != None):
-            tweetLocation = location + "::" + tweet+"\n"
+        if (tweet != None and location != None):
             print(status.text)
-            conn.send(tweetLocation.encode('utf-8'))
-
+            tweetLocation = location + '::' + tweet + '\n'
+            # conn.send(tweetLocation.encode('utf-8'))
         return True
 
-
     def on_error(self, status_code):
-        if status_code == 420:
-            return False
-        else:
-            print(status_code)
+        print(f'StreamListener Error: status {status_code}')
+        return False
 
-myStream = tweepy.Stream(auth=auth, listener=MyStreamListener())
+myStream = tweepy.Stream(auth=auth, listener=StreamListener())
+
 myStream.filter(track=[hashtag], languages=["en"])
 
 

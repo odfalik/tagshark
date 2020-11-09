@@ -4,10 +4,7 @@ from pyspark.streaming import StreamingContext
 # from textblob import TextBlob
 # from elasticsearch import Elasticsearch
 
-
-
-TCP_IP = 'localhost'
-TCP_PORT = 9001
+from config import *
 
 
 
