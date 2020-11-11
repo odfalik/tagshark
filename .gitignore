@@ -1,6 +1,7 @@
 config.py
 tagshark
-checkpoint*
+checkpoint_tagshark
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
