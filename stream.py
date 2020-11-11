@@ -1,8 +1,6 @@
 from config import *
 import sys
 import socket
-import re
-import json
 import tweepy
 import preprocessor
 
@@ -10,7 +8,7 @@ import preprocessor
 auth = tweepy.OAuthHandler(API_KEY, API_KEY_S)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_S)
 
-hashtag = '#covid19'
+KEYWORD = '#covid19'
 
 
 def preprocessTweet(status):
@@ -42,8 +40,8 @@ print('Received socket connection')
 class StreamListener(tweepy.StreamListener):
     def on_status(self, status):
         formatted_tweet = preprocessTweet(status).encode('utf-8')
-        print(f'{formatted_tweet}\n\n')
         conn.send(formatted_tweet)
+        print(f'{formatted_tweet}\n\n')
         return True
 
     def on_error(self, status_code):
@@ -53,4 +51,4 @@ class StreamListener(tweepy.StreamListener):
 
 myStream = tweepy.Stream(auth=auth, listener=StreamListener())
 
-myStream.filter(track=[hashtag], languages=['en'])
+myStream.filter(track=[KEYWORD], languages=['en'])

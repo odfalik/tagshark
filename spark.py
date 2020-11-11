@@ -2,6 +2,7 @@ from config import *
 import json
 from pyspark import SparkConf, SparkContext
 from pyspark.streaming import StreamingContext
+from pyspark.sql import SQLContext
 # from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 # from geopy.geocoders import Nominatim
 # from textblob import TextBlob
@@ -19,27 +20,27 @@ def processTweet(formatted_tweet):
     text = tweet[0]
     location = tweet[1]
 
-    print('\n' + location)
+    # print('\n' + location)
     # if len(tweet) > 0:
     #     text = tweet['text']
     #     rawLocation = tweet['location']
 
     #     print("\n\n=========================\ntweet: ", text)
 
-        # (i) Apply Sentiment analysis in "text"
-        # print(f'sentiment: {vader.polarity_scores(text)}')
+    # (i) Apply Sentiment analysis in "text"
+    # print(f'sentiment: {vader.polarity_scores(text)}')
 
-        # (ii) Get geolocation (state, country, lat, lon, etc...) from rawLocation
+    # (ii) Get geolocation (state, country, lat, lon, etc...) from rawLocation
 
-        # print("Raw location from tweet status: ", rawLocation)
-        # print("lat: ", lat)
-        # print("lon: ", lon)
-        # print("state: ", state)
-        # print("country: ", country)
-        # print("Text: ", text)
-        # print("Sentiment: ", sentiment)
+    # print("Raw location from tweet status: ", rawLocation)
+    # print("lat: ", lat)
+    # print("lon: ", lon)
+    # print("state: ", state)
+    # print("country: ", country)
+    # print("Text: ", text)
+    # print("Sentiment: ", sentiment)
 
-        # (iii) Post the index on ElasticSearch or log your data in some other way (you are always free!!)
+    # (iii) Post the index on ElasticSearch or log your data in some other way (you are always free!!)
 
 
 conf = SparkConf()
@@ -48,7 +49,8 @@ conf.setMaster('local[2]')  # 2-core master
 sc = SparkContext(conf=conf)
 
 ssc = StreamingContext(sc, 4)   # 4s interval
-ssc.checkpoint("checkpoint_tagshark")
+# ssc.checkpoint("checkpoint_tagshark")
+
 
 dataStream = ssc.socketTextStream(TCP_IP, TCP_PORT) \
     .foreachRDD(lambda rdd: rdd.foreach(processTweet))
