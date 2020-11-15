@@ -3,57 +3,42 @@ import json
 from pyspark import SparkConf, SparkContext
 from pyspark.streaming import StreamingContext
 from pyspark.sql import SQLContext
-# from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-# from geopy.geocoders import Nominatim
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from geopy.geocoders import Nominatim
 # from textblob import TextBlob
-# from elasticsearch import Elasticsearch
-
-# vader = SentimentIntensityAnalyzer()
+from elasticsearch import Elasticsearch
 
 
-# Here, you should implement:
-# (i) Sentiment analysis,
-# (ii) Get data corresponding to place where the tweet was generate (using geopy or googlemaps)
-# (iii) Index the data using Elastic Search
-def processTweet(formatted_tweet):
-    tweet = formatted_tweet.split('::')
-    text = tweet[0]
-    location = tweet[1]
+def process_partition(partition):
+    es = Elasticsearch([{'host': ES_IP,'port': ES_PORT}])
+    vader = SentimentIntensityAnalyzer()
 
-    # print('\n' + location)
-    # if len(tweet) > 0:
-    #     text = tweet['text']
-    #     rawLocation = tweet['location']
+    for tweet in partition:
+        tweet = json.loads(tweet)
+        text = tweet['text']
+        location = tweet['location']
 
-    #     print("\n\n=========================\ntweet: ", text)
+        doc = {
+            'location': location,
+            'sentiment': vader.polarity_scores(text),
+            'text': text
+        }
 
-    # (i) Apply Sentiment analysis in "text"
-    # print(f'sentiment: {vader.polarity_scores(text)}')
-
-    # (ii) Get geolocation (state, country, lat, lon, etc...) from rawLocation
-
-    # print("Raw location from tweet status: ", rawLocation)
-    # print("lat: ", lat)
-    # print("lon: ", lon)
-    # print("state: ", state)
-    # print("country: ", country)
-    # print("Text: ", text)
-    # print("Sentiment: ", sentiment)
-
-    # (iii) Post the index on ElasticSearch or log your data in some other way (you are always free!!)
+        res = es.index(index='tagshark', body=doc)
+        print(res)
 
 
-conf = SparkConf()
-conf.setAppName('tagshark')
-conf.setMaster('local[2]')  # 2-core master
-sc = SparkContext(conf=conf)
+sc = SparkContext(
+    appName='tagshark',
+    master='local[2]'
+)
+sc.setLogLevel("ERROR")
 
 ssc = StreamingContext(sc, 4)   # 4s interval
-# ssc.checkpoint("checkpoint_tagshark")
+ssc.checkpoint("checkpoint")
 
-
-dataStream = ssc.socketTextStream(TCP_IP, TCP_PORT) \
-    .foreachRDD(lambda rdd: rdd.foreach(processTweet))
+stream = ssc.socketTextStream(STREAM_IP, STREAM_PORT)
+stream.foreachRDD(lambda r: r.foreachPartition(process_partition))
 
 ssc.start()
 ssc.awaitTermination()

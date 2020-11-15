@@ -1,6 +1,6 @@
 config.py
 venv
-checkpoint_tagshark
+checkpoint
 .vscode
 
 # Byte-compiled / optimized / DLL files
