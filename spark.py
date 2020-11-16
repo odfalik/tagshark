@@ -22,16 +22,27 @@ def process_partition(partition):
         tweet['sentiment'] = vader.polarity_scores(tweet['text'])['compound']
 
         # Location analysis
-        if 'location' in tweet and isinstance(tweet['location'], str):
-            geoloc = geolocator.geocode(tweet['location'])
-            if geoloc is not None:
-                tweet['location'] = [geoloc.latitude, geoloc.longitude]
+        try:
+            if 'location' in tweet and isinstance(tweet['location'], str):
+                geoloc = geolocator.geocode(tweet['location'])
+                if geoloc is not None:
+                    tweet['location'] = [geoloc.latitude, geoloc.longitude]
+        except Exception as e:
+            print('Nominatim error: ' + str(e))
 
-        # Remove data
-        tweet.pop('text', None)
+        # Indexing
+        if 'location' in tweet and isinstance(tweet['location'], list):
 
-        # Push document to ES
-        res = es.index(index='tagshark', body=tweet)
+            tweet['location'] = ','.join([str(el) for el in tweet['location']])
+
+            # Remove data
+            tweet.pop('text', None)
+
+            # Write document to ES
+            try:
+                es.index(index='tagshark', body=tweet)
+            except Exception as e:
+                print('ES indexing error: ' + str(e))
 
 
 sc = SparkContext(

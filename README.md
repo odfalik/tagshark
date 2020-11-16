@@ -1,7 +1,7 @@
 source venv/bin/activate
 
-sudo systemctl start elasticsearch
-sudo systemctl start kibana
+sudo systemctl restart elasticsearch
+sudo systemctl restart kibana
 
 localhost
     :4040 Spark
