@@ -6,6 +6,7 @@ from pyspark.sql import SQLContext
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from geopy.geocoders import Nominatim
 from elasticsearch import Elasticsearch
+# from polyglot.text import Text
 
 
 def process_partition(partition):

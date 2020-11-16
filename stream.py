@@ -10,7 +10,7 @@ auth = tweepy.OAuthHandler(TW_API_KEY, TW_API_KEY_S)
 auth.set_access_token(TW_ACCESS_TOKEN, TW_ACCESS_TOKEN_S)
 
 KEYWORD = '#covid19'
-if len(sys.argv) != 2:
+if len(sys.argv) > 1:
     KEYWORD = sys.argv[1] or 'covid19'
 
 
@@ -27,7 +27,7 @@ def clean_text(text):
 
     # Remove HTML entities such as &amp;
     text = re.sub('&(#?\\w+);', '', text)
-
+    print(text + '\n')
     return text
 
 
@@ -54,11 +54,9 @@ def preprocess_tweet(status):
     # Location
     location = None
     if hasattr(status, 'coordinates') and status.coordinates is not None:
-        print('coordinates: ' + status.coordinates)
         location = status.coordinates
     elif hasattr(status, 'place') and hasattr(status.place, 'coordinates'):
         location = [sum(x) / len(x) for x in zip(*status.place.coordinates)]
-        print('place: ' + str(location))
     elif hasattr(status, 'user') and status.user.location is not None:
         location = clean_text(status.user.location)
     if location is not None:
