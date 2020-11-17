@@ -1,0 +1,11 @@
+TW_API_KEY = ''
+TW_API_KEY_S = ''
+TW_ACCESS_TOKEN = ''
+TW_ACCESS_TOKEN_S = ''
+TW_BEARER_TOKEN = ''
+
+STREAM_IP = 'localhost'
+STREAM_PORT = 9001
+
+ES_IP = 'localhost'
+ES_PORT = 9200
