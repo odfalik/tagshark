@@ -9,6 +9,13 @@ sudo systemctl restart elasticsearch
 sudo systemctl restart kibana
 ```
 
+To import Kibana dashboard/maps:
+1. Go to Kibana
+2. Click on Management
+3. Click on Saved Objects
+4. Click on the Import button
+5. Browse the exported file
+
 ### Useful ports
 - ```4040``` Spark
 - ```9200``` ES
