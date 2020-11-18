@@ -18,11 +18,11 @@ To import Kibana dashboard/maps:
 
 ### Useful ports
 - ```4040``` Spark
-- ```9200``` ES
+- ```9200``` Elasticsearch
 - ```5601``` Kibana
     
 
-### Useful ES queries
+### Useful Elasticsearch queries
 ```json
 // Delete index
 DELETE tagshark
