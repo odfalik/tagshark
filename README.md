@@ -14,7 +14,7 @@ To import Kibana dashboard/maps:
 2. Click on Management
 3. Click on Saved Objects
 4. Click on the Import button
-5. Browse the exported file
+5. Load ```export.ndjson``` (found in the root of this repo)
 
 ### Useful ports
 - ```4040``` Spark
