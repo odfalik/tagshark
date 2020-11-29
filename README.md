@@ -7,6 +7,8 @@
 pip install -r requirements.txt
 sudo systemctl restart elasticsearch
 sudo systemctl restart kibana
+
+python3 stream.py && python3 spark.py
 ```
 
 To import Kibana dashboard/maps:
@@ -16,7 +18,7 @@ To import Kibana dashboard/maps:
 4. Click on the Import button
 5. Load ```export.ndjson``` (found in the root of this repo)
 
-### Useful ports
+### Useful (default) ports
 - ```4040``` Spark
 - ```9200``` Elasticsearch
 - ```5601``` Kibana

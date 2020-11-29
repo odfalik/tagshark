@@ -9,9 +9,9 @@ import tweepy
 auth = tweepy.OAuthHandler(TW_API_KEY, TW_API_KEY_S)
 auth.set_access_token(TW_ACCESS_TOKEN, TW_ACCESS_TOKEN_S)
 
-KEYWORD = '#covid19'
-if len(sys.argv) > 1:
-    KEYWORD = sys.argv[1] or 'covid19'
+global my_stream
+my_stream = None
+global KEYWORD
 
 
 def clean_text(text):
@@ -27,7 +27,7 @@ def clean_text(text):
 
     # Remove HTML entities such as &amp;
     text = re.sub('&(#?\\w+);', '', text)
-    print(text + '\n')
+    # print(text + '\n')
     return text
 
 
@@ -65,7 +65,7 @@ def preprocess_tweet(status):
     return tweet
 
 
-print('Starting socket')
+print('Starting socket. Please connect with spark.py or nc localhost 9001')
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((STREAM_IP, STREAM_PORT))
 s.listen(1)
@@ -84,6 +84,11 @@ class StreamListener(tweepy.StreamListener):
         return False
 
 
-myStream = tweepy.Stream(auth=auth, listener=StreamListener())
-
-myStream.filter(track=[KEYWORD], languages=['en'])
+while True:
+    print('Enter a keyword to track: ', end='')
+    KEYWORD = input()
+    print(f'current keyword: {KEYWORD}')
+    if my_stream is not None:
+        del my_stream
+    my_stream = tweepy.Stream(auth=auth, listener=StreamListener())
+    my_stream.filter(track=[KEYWORD], languages=['en'], is_async=True)

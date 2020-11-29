@@ -1,8 +1,7 @@
 from config import *
 import json
-from pyspark import SparkConf, SparkContext
+from pyspark import SparkContext
 from pyspark.streaming import StreamingContext
-from pyspark.sql import SQLContext
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from geopy.geocoders import Nominatim
 from elasticsearch import Elasticsearch
