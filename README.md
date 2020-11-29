@@ -7,9 +7,10 @@
 pip install -r requirements.txt
 sudo systemctl restart elasticsearch
 sudo systemctl restart kibana
-
-python3 stream.py && python3 spark.py
 ```
+In one terminal, run ```python3 stream.py```
+and in another, run ```python3 spark.py```
+
 
 To import Kibana dashboard/maps:
 1. Go to Kibana

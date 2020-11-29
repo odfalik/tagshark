@@ -87,7 +87,7 @@ class StreamListener(tweepy.StreamListener):
 while True:
     print('Enter a keyword to track: ', end='')
     KEYWORD = input()
-    print(f'current keyword: {KEYWORD}')
+    print(f'Now tracking keyword: {KEYWORD}')
     if my_stream is not None:
         del my_stream
     my_stream = tweepy.Stream(auth=auth, listener=StreamListener())
